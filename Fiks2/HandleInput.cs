@@ -9,10 +9,10 @@ public class HandleInput {
         lines = File.ReadAllLines(path);
     }
     
-    public void GetPoints(int indexOfInput, out Point[] points) {
+    public Point[] GetPoints(int indexOfInput) {
         // Initialize points
         var numOfPoints = int.Parse(lines[indexOfInput + 1]);
-        points = new Point[numOfPoints];
+        var points = new Point[numOfPoints];
         
         // Create all points
         var allX = lines[indexOfInput + 2].Split(' ');
@@ -20,5 +20,7 @@ public class HandleInput {
         for (int i = 0; i < numOfPoints; i++) {
             points[i] = new Point(int.Parse(allX[i]), int.Parse(allY[i]));
         }
+
+        return points;
     }
 }
