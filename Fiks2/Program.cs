@@ -1,6 +1,5 @@
 ﻿using System.Drawing;
-using System.Numerics;
-using System.Windows;
+using System.Diagnostics;
 
 namespace Fiks2;
 
@@ -12,7 +11,7 @@ class Program
         HandleInput handleInput = new HandleInput("input.txt");
         
         // Get the points
-        var points = handleInput.GetPoints(1);
+        var points = handleInput.GetPoints(0);
         // Get the middle point
         var middlePoint = GetMiddlePoint(points);
         
@@ -25,7 +24,7 @@ class Program
         foreach (var dicts in pointsOnAxis) {
             Console.WriteLine("New Axis");
             foreach (var axis in dicts) {
-                Console.WriteLine($"Axis: {axis.Key} - Count: {axis.Value.Count}");
+                Console.WriteLine($"Axis: {axis.Key} - Count: {axis.Value}");
             }
         }
         
@@ -34,7 +33,9 @@ class Program
         double sub = 1000000000;
         if (middlePoint[0] < 1000000000)
             sub = middlePoint[0];
-        for (double s = middlePoint[0] - sub, e = middlePoint[0] + sub; s > middlePoint[0] && middlePoint[0] < e && isMiddlePoint ; s++, e--) {
+        Stopwatch stopwatch = Stopwatch.StartNew();
+        stopwatch.Start();
+        for (double s = middlePoint[0] - sub, e = middlePoint[0] + sub; s < middlePoint[0] && middlePoint[0] < e && isMiddlePoint ; s++, e--) {
             switch (pointsOnAxis[0]) {
                 case var x when x.ContainsKey((int)s):
                     if (!pointsOnAxis[0].ContainsKey((int)e)) {
@@ -48,6 +49,8 @@ class Program
                     break;
             }
         }
+        stopwatch.Stop();
+        Console.WriteLine($"Execution Time: {stopwatch.ElapsedMilliseconds} ms");
         sub = 1000000000;
         if (middlePoint[1] < 1000000000)
             sub = middlePoint[1];
@@ -89,22 +92,22 @@ class Program
     /// </summary>
     /// <param name="points"> Points that we want to distribute</param>
     /// <returns>[0] is x-axis; [1] is y-axis</returns>
-    static Dictionary<int, List<Point>>[] GetPointsOnAxis(Point[] points) {
-        Dictionary<int, List<Point>>[] pointsOnAxis = new Dictionary<int, List<Point>>[2];
-        pointsOnAxis[0] = new Dictionary<int, List<Point>>();
-        pointsOnAxis[1] = new Dictionary<int, List<Point>>();
+    static Dictionary<int, int>[] GetPointsOnAxis(Point[] points) {
+        Dictionary<int, int>[] pointsOnAxis = new Dictionary<int, int>[2];
+        pointsOnAxis[0] = new Dictionary<int, int>();
+        pointsOnAxis[1] = new Dictionary<int, int>();
         // Add all points to the dictionary
         foreach (var point in points) {
             // Add point to x-axis
             if (!pointsOnAxis[0].ContainsKey(point.X)) {
-                pointsOnAxis[0][point.X] = new List<Point>();
+                pointsOnAxis[0][point.X] = 0;
             }
-            pointsOnAxis[0][point.X].Add(point);
+            pointsOnAxis[0][point.X]++;
             // Add point to y-axis
             if (!pointsOnAxis[1].ContainsKey(point.Y)) {
-                pointsOnAxis[1][point.Y] = new List<Point>();
+                pointsOnAxis[1][point.Y] = 0;
             }
-            pointsOnAxis[1][point.Y].Add(point);
+            pointsOnAxis[1][point.Y]++;
         }
         return pointsOnAxis;
     }
