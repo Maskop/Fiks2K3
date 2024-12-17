@@ -12,6 +12,12 @@ class Program
         
         // Get the points
         var points = handleInput.GetPoints(0);
+
+        if (points.Length % 2 == 1) {
+            Console.WriteLine("Cannot be symmetric");
+            return;
+        }
+        
         // Get the middle point
         var middlePoint = GetMiddlePoint(points);
         
@@ -28,8 +34,21 @@ class Program
             }
         }
         
-        bool isMiddlePoint = true;
+        bool isTheMiddlePointReal = true;
+        var sortedPointsOnAxisX = from entry in pointsOnAxis[0] orderby entry.Key ascending select entry;
+        var sortedPointsOnAxisY = from entry in pointsOnAxis[1] orderby entry.Key ascending select entry;
+
+        Console.WriteLine();
+        foreach (var axis in sortedPointsOnAxisX) {
+            Console.WriteLine($"Axis: {axis.Key} - Count: {axis.Value}");
+        }
+
+        Console.WriteLine();
+        foreach (var axis in sortedPointsOnAxisY) {
+            Console.WriteLine($"Axis: {axis.Key} - Count: {axis.Value}");
+        }
         
+        /*
         double sub = 1000000000;
         if (middlePoint[0] < 1000000000)
             sub = middlePoint[0];
@@ -67,9 +86,9 @@ class Program
                     }
                     break;
             }
-        }
+        }*/
 
-        Console.WriteLine(isMiddlePoint ? "YES" : "NO");
+        Console.WriteLine(isTheMiddlePointReal ? $"{middlePoint[0]} {middlePoint[1]}" : "NO");
     }
     
     // Get the middle point of an array of points
@@ -82,7 +101,7 @@ class Program
             middlePointY += point.Y;
         }
         // Divide by number of points
-        middlePointX = middlePointX / points.Length; middlePointY /= points.Length;
+        middlePointX /= points.Length; middlePointY /= points.Length;
         // middlePointX -= 1000000000; middlePointY -= 1000000000;
         return new double[] {middlePointX, middlePointY};
     }
@@ -112,4 +131,20 @@ class Program
         return pointsOnAxis;
     }
     
+    /// <summary>
+    /// Checks if all sides have
+    /// </summary>
+    /// <param name="axisX"></param>
+    /// <param name="axisY"></param>
+    /// <param name="middlePoint"></param>
+    /// <returns></returns>
+    static bool CheckSides(Dictionary<int, int> axisX, Dictionary<int, int> axisY, double[] middlePoint) {
+        // Check if middle point is real
+        var halvedX = axisX.Count / 2; var halvedY = axisY.Count / 2;
+        // Make it so it check also for even and odd numbers
+        if (Math.Abs((axisX.ElementAt(halvedX).Key + axisX.ElementAt(halvedX + 1).Key) / 2 - middlePoint[0]) > 0.05 || Math.Abs((axisY.ElementAt(halvedY).Key + axisY.ElementAt(halvedY + 1).Key) / 2 - middlePoint[1]) > 0.05)
+            return false;
+        
+        return true;
+    }
 }
