@@ -33,7 +33,7 @@ namespace Fiks2 {
                 double[] middlePoint = new Double[2];
                 Console.WriteLine($"Progress: {i + 1}/{numOfInputs}");
                 // Solve the problem and write the output
-                sw.WriteLine(Solve(handleInput, i, ref middlePoint) ? $"{middlePoint[0]} {middlePoint[1]}" : "ajajaj");
+                sw.WriteLine(Solve(handleInput, i, ref middlePoint) ? $"{middlePoint[0] - 1000000000} {middlePoint[1] - 1000000000}" : "ajajaj");
             }
             
             // Show that the program is done
